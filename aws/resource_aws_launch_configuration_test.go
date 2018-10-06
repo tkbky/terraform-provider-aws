@@ -336,6 +336,30 @@ func TestAccAWSLaunchConfiguration_ebs_noDevice(t *testing.T) {
 		},
 	})
 }
+
+func TestAccAWSLaunchConfiguration_ephemeral_noDevice(t *testing.T) {
+	var conf autoscaling.LaunchConfiguration
+	rInt := acctest.RandInt()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckAWSLaunchConfigurationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccAWSLaunchConfigurationConfigEphemeralNoDevice(rInt),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckAWSLaunchConfigurationExists("aws_launch_configuration.bar", &conf),
+					resource.TestCheckResourceAttr("aws_launch_configuration.bar", "ephemeral_block_device.#", "1"),
+					resource.TestCheckResourceAttr("aws_launch_configuration.bar", "ephemeral_block_device.1692014856.device_name", "/dev/sde"),
+					resource.TestCheckResourceAttr("aws_launch_configuration.bar", "ephemeral_block_device.1692014856.virtual_name", "ephemeral0"),
+					resource.TestCheckResourceAttr("aws_launch_configuration.bar", "ephemeral_block_device.1692014856.no_device", "true"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccAWSLaunchConfiguration_userData(t *testing.T) {
 	var conf autoscaling.LaunchConfiguration
 
@@ -704,6 +728,21 @@ resource "aws_launch_configuration" "bar" {
   ebs_block_device {
     device_name = "/dev/sda2"
     no_device = true
+  }
+}
+`, rInt)
+}
+
+func testAccAWSLaunchConfigurationConfigEphemeralNoDevice(rInt int) string {
+	return testAccAWSLaunchConfigurationConfig_ami() + fmt.Sprintf(`
+resource "aws_launch_configuration" "bar" {
+  name_prefix = "tf-acc-test-%d"
+  image_id = "${data.aws_ami.ubuntu.id}"
+  instance_type = "m1.small"
+	ephemeral_block_device {
+    device_name = "/dev/sde"
+    virtual_name = "ephemeral0"
+		no_device = true
   }
 }
 `, rInt)

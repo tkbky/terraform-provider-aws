@@ -206,6 +206,7 @@ Each `ephemeral_block_device` supports the following:
 * `virtual_name` - The [Instance Store Device
   Name](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html#InstanceStoreDeviceNames)
   (e.g. `"ephemeral0"`)
+* `no_device` - (Optional) Suppresses the specified device included in the AMI's block device mapping.
 
 Each AWS Instance type has a different set of Instance Store block devices
 available for attachment. AWS [publishes a

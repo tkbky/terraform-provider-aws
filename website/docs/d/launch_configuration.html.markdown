@@ -68,3 +68,4 @@ In addition to all arguments above, the following attributes are exported:
 
 * `device_name` - The Name of the device.
 * `virtual_name` - The Virtual Name of the device.
+* `no_device` - (Optional) Suppresses the specified device included in the AMI's block device mapping.
